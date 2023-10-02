@@ -1,4 +1,3 @@
-// database/connection.js
 const oracledb = require('oracledb');
 const dotenv = require('dotenv');
 dotenv.config();
@@ -15,12 +14,12 @@ async function initialize() {
 
 initialize();
 
-const execSQLQuery = async (query) => {
+const execSQLQuery = async (query, binds) => {
     let connection;
     try {
         connection = await oracledb.getConnection();
-        const result = await connection.execute(query);
-        return result.rows;
+        const result = await connection.execute(query, binds, { autoCommit: true }); // Adicione { autoCommit: true }
+        return result;
     } catch (error) {
         console.error('Erro na execução da consulta:', error);
         throw error;
