@@ -1,2 +1,7 @@
 /node_modules
 .env
+
+# Python
+/python/nattypro/
+*.pyc
+__pycache__/z
