@@ -1,4 +1,4 @@
-CREATE TABLE TABELA_NUTRICAO (
+CREATE TABLE TabelaNutricao (
     IDAlimento NUMBER PRIMARY KEY,
     NomeAlimento VARCHAR2(100),
     Categoria VARCHAR2(50),
