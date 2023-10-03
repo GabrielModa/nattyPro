@@ -2,8 +2,10 @@ import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
 import time
+import json
 
-# Função para enviar dados para o servidor local
+# Função para enviar dados para o servidor
+
 
 def send_data_to_server(data):
     # Substitua pela URL da sua rota no servidor
@@ -16,14 +18,41 @@ def send_data_to_server(data):
         print(
             f'Falha ao enviar dados para o servidor. Código de status: {response.status_code}')
 
+# Função para carregar o último checkpoint processado
+
+
+def load_checkpoint():
+    try:
+        with open('checkpoint.json', 'r') as checkpoint_file:
+            checkpoint = json.load(checkpoint_file)
+            return checkpoint.get('page_number', 1), checkpoint.get('last_item_code', None)
+    except FileNotFoundError:
+        return 1, None
+
+# Função para salvar o checkpoint atual
+
+
+def save_checkpoint(page_number, last_item_code):
+    checkpoint = {
+        'page_number': page_number,
+        'last_item_code': last_item_code
+    }
+    with open('checkpoint.json', 'w') as checkpoint_file:
+        json.dump(checkpoint, checkpoint_file)
+
+
+# Defina manualmente os valores iniciais
+page_number = 43  # Defina o número da página de onde deseja começar
+last_item_code = 'BRC0225C'  # Defina o código do último item processado
+
+# Restaurar o último checkpoint
+# page_number, last_item_code = load_checkpoint()
+
 # Configurar o Selenium para usar o Chrome WebDriver (certifique-se de ter o WebDriver instalado)
 driver = webdriver.Chrome()
 
 # URL da página inicial
 base_url = 'https://tbca.net.br/base-dados/composicao_alimentos.php?pagina={}'
-
-# Iniciar com a página 1
-page_number = 1
 
 while True:
     # Construir a URL da página atual
@@ -99,12 +128,15 @@ while True:
                             # Inicializar o dicionário de dados
                             post_data = {
                                 "item_code": codigo_produto,
-                                "component": row_data[0],  # Assuming the component is in the first column
-                                "units": row_data[1],      # Assuming units are in the second column
-                                "value_per_100g": row_data[2],  # Assuming value per 100g is in the third column
+                                # Assuming the component is in the first column
+                                "component": row_data[0],
+                                # Assuming units are in the second column
+                                "units": row_data[1],
+                                # Assuming value per 100g is in the third column
+                                "value_per_100g": row_data[2],
                             }
 
-                            # Send the data to the local server
+                            # Enviar os dados para o servidor
                             send_data_to_server(post_data)
 
                             print(f"code: {codigo_produto}")
@@ -120,12 +152,17 @@ while True:
 
                 # Voltar à página inicial
                 driver.back()
+                last_item_code = codigo_produto
             else:
                 print("Código de produto não encontrado na primeira coluna.")
+
+    # Salvar o checkpoint atual
+    save_checkpoint(page_number, last_item_code)
+
     # Incrementar o número da página
     page_number += 1
 
-    # Adicionar um atraso mínimo de 1 segundo antes da próxima solicitação
+    # Adicionar um atraso mínimo de 2 segundos antes da próxima solicitação
     time.sleep(2)
 
 # Fechar o navegador Selenium no final

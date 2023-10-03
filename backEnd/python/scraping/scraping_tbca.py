@@ -55,29 +55,29 @@ while True:
     for row in rows:
         cols = row.find_all('td')
         if len(cols) >= 5:
-            codigo = cols[0].get_text()
+            code = cols[0].get_text()
             nome = cols[1].get_text()
-            nome_cientifico = cols[2].get_text()
-            grupo = cols[3].get_text()
-            marca = cols[4].get_text()
+            scientific_name = cols[2].get_text()
+            food_group = cols[3].get_text()
+            brand = cols[4].get_text()
 
             # Criar um dicionário com os dados
             data = {
-                'codigo': codigo,
+                'code': code,
                 'nome': nome,
-                'nome_cientifico': nome_cientifico,
-                'grupo': grupo,
-                'marca': marca
+                'scientific_name': scientific_name,
+                'food_group': food_group,
+                'brand': brand
             }
 
             # Enviar os dados para o servidor local
             send_data_to_server(data)
 
-            print(f"CODIGO: {codigo}")
-            print(f"NOME: {nome}")
-            print(f"NOME CIENTIFICO: {nome_cientifico}")
-            print(f"GRUPO: {grupo}")
-            print(f"MARCA: {marca}")
+            print(f"code: {code}")
+            print(f"nome: {nome}")
+            print(f"NOME CIENTIFICO: {scientific_name}")
+            print(f"food_group: {food_group}")
+            print(f"brand: {brand}")
             print("-" * 20)  # Linha de separação entre os registros
 
     # Incrementar o número da página
