@@ -61,7 +61,6 @@ const insertDetails = async (data) => {
     }
 };
 
-
 module.exports = {
     insertData,
     insertDetails
